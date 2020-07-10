@@ -15,7 +15,7 @@ function getPercentage(stat, avr){
 }
 const data3 = [];
 
-function reset(){
+function reset(){ //엑셀 텍스트를 반복문을 돌려서 2차원 배열로 저장
     const data = `Liverpool	29	15	63	10	213	500	772	1	5	20,746	59.4
     Manchester City	21	8	68	14	263	631	809	3	6	22,445	61.7
     Chelsea	18	8	54	9	230	567	763	1	7	20,459	57.5
@@ -43,68 +43,127 @@ function reset(){
 }
 
 reset();
-
-const avr = [];
+const average = [];
 const percentage = [];
-const percentageAvr = [];
-
-for(let i = 0; i < data3.length; i++){
-    for(let j = 1; j < data3[i].length; j++){
-        if(i == 0) avr[j-1] = 0;
-        
-        data3[i][j] = data3[i][j].replace(",", "") *1;
-        avr[j-1] += data3[i][j];
-    }
-}
-
-for(let i in avr){
-    avr[i] /= data3.length;
-    
-}
+const deviation = [];
+const dispersion = [];
+const sDeviation = [];
 console.log(data3);
-console.log(avr);
 
-
-
-for(let i in data3){
-    percentage[i] = [];
-    for(let j = 1; j < data3[i].length; j++){
-        percentage[i][j-1] = (data3[i][j]*1 - avr[j-1])/avr[j-1];
-        console.log(data3[i][j]);
-        console.log(avr[j-1]);
-        
-        
-        console.log(percentage[i][j-1]);
-        
-    }
-}
-
-for(let i in percentage){
-    for(let j in percentage[i]){
-        
-        if(j == 0){
-
-        }else{
+for(let i in data3){ //이중 포문을 사용한 각 요인별 총합 구하기
+    for(let j in data3[i]){
+        if(j != 0){
             if(i == 0){
-                percentageAvr[j-1] = 0;
+                average[j-1] = 0;
             }
-            percentageAvr[j-1] += Math.pow(percentage[i][j], 2);
-            
-            
+            data3[i][j] = data3[i][j].replace(",", "") * 1;
+            average[j-1] += data3[i][j];
         }
     }
 }
-console.log(percentageAvr);
 
-for(let i in percentageAvr){
-    percentageAvr[i] /= data3[0].length - 1;
-    percentageAvr[i] = Math.sqrt(percentageAvr[i]);
+for(let i in average){ //2차원 배열의 첫번째 배열의 크기로 나눠서 각 요인별 평균 구하기
+    average[i] /= data3.length;
 }
 
-const body = document.querySelector("body");
-
-for(let i in percentageAvr){
-    let div = document.createElement("p");
-    div.innerText = percentageAvr[i];
-    body.appendChild(div);
+for(let i in data3){ //(자신의 값/평균)*100 으로 각 요인 마다 오차 백분율 구하기
+    for(let j in data3[i]){
+        if(j != 0){
+            if(j == 1) {
+                percentage[i] = [];
+            }
+            if(percentage.length <= i) console.log("err", percentage.length, " ", i);
+            
+            percentage[i][j-1] = (data3[i][j] / average[j-1]) * 100 - 100;
+        }
+    }
 }
+
+for(let i in percentage){ //팀 별로 자신의 요인 오차 백분율 - 자기 승리 오차백분율 구하기 <= 승리수와의 편차
+    for(let j in percentage[i]){
+        if(j != 0){ //승리수는 편차 X
+            if(i == 0){
+                deviation[j-1] = [];
+            }
+            deviation[j-1][i] = percentage[i][j] - percentage[i][0];
+        }
+    }
+}
+
+for(let i in deviation){ //구한 편차^2의 합 의 제곱근으로 승리수와의 표준편차 구하기
+    for(let j in deviation[i]){
+        if(j == 0){
+            dispersion[i] = 0;
+        }
+        dispersion[i] += Math.pow(deviation[i][j], 2);
+    }
+    sDeviation[i] /= deviation[i].length;
+    sDeviation[i] = Math.sqrt(sDeviation[i]);
+}
+
+console.log(dispersion);
+
+// const avr = [];
+// const percentage = [];
+// const percentageAvr = [];
+
+// for(let i = 0; i < data3.length; i++){
+//     for(let j = 1; j < data3[i].length; j++){
+//         if(i == 0) avr[j-1] = 0;
+        
+//         data3[i][j] = data3[i][j].replace(",", "") *1;
+//         avr[j-1] += data3[i][j];
+//     }
+// }
+
+// for(let i in avr){
+//     avr[i] /= data3.length;
+    
+// }
+// console.log(data3);
+// console.log(avr);
+
+
+
+// for(let i in data3){
+//     percentage[i] = [];
+//     for(let j = 1; j < data3[i].length; j++){
+//         percentage[i][j-1] = (data3[i][j]*1 - avr[j-1])/avr[j-1];
+//         console.log(data3[i][j]);
+//         console.log(avr[j-1]);
+        
+        
+//         console.log(percentage[i][j-1]);
+        
+//     }
+// }
+
+// for(let i in percentage){
+//     for(let j in percentage[i]){
+        
+//         if(j == 0){
+
+//         }else{
+//             if(i == 0){
+//                 percentageAvr[j-1] = 0;
+//             }
+//             percentageAvr[j-1] += Math.pow(percentage[i][j], 2);
+            
+            
+//         }
+//     }
+// }
+// console.log(percentageAvr);
+
+// for(let i in percentageAvr){
+//     percentageAvr[i] /= data3[0].length - 1;
+//     percentageAvr[i] = Math.sqrt(percentageAvr[i]);
+// }
+
+// const body = document.querySelector("body");
+
+// for(let i in percentageAvr){
+//     let div = document.createElement("p");
+//     div.innerText = percentageAvr[i];
+//     body.appendChild(div);
+// }

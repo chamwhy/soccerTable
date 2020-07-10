@@ -51,8 +51,9 @@ const percentageAvr = [];
 for(let i = 0; i < data3.length; i++){
     for(let j = 1; j < data3[i].length; j++){
         if(i == 0) avr[j-1] = 0;
-        avr[j-1] += data3[i][j].replace(",", "") * 1;
         
+        data3[i][j] = data3[i][j].replace(",", "") *1;
+        avr[j-1] += data3[i][j];
     }
 }
 
@@ -60,25 +61,41 @@ for(let i in avr){
     avr[i] /= data3.length;
     
 }
+console.log(data3);
+console.log(avr);
+
+
 
 for(let i in data3){
     percentage[i] = [];
-    for(let j in data3[i]){
-        percentage[i][j] = (data3[i][j+1] - avr[j])/avr[j];
+    for(let j = 1; j < data3[i].length; j++){
+        percentage[i][j-1] = (data3[i][j]*1 - avr[j-1])/avr[j-1];
+        console.log(data3[i][j]);
+        console.log(avr[j-1]);
         
-        console.log(data3[i][j+1]);
+        
+        console.log(percentage[i][j-1]);
         
     }
 }
+
 for(let i in percentage){
     for(let j in percentage[i]){
+        
         if(j == 0){
 
         }else{
+            if(i == 0){
+                percentageAvr[j-1] = 0;
+            }
             percentageAvr[j-1] += Math.pow(percentage[i][j], 2);
+            
+            
         }
     }
 }
+console.log(percentageAvr);
+
 for(let i in percentageAvr){
     percentageAvr[i] /= data3[0].length - 1;
     percentageAvr[i] = Math.sqrt(percentageAvr[i]);

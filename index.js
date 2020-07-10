@@ -97,8 +97,24 @@ for(let i in deviation){ //구한 편차^2의 합 의 제곱근으로 승리수�
         }
         dispersion[i] += Math.pow(deviation[i][j], 2);
     }
-    sDeviation[i] /= deviation[i].length;
-    sDeviation[i] = Math.sqrt(sDeviation[i]);
+    dispersion[i] /= deviation[i].length;
+    
+    
+    sDeviation[i] = Math.sqrt(dispersion[i]);
 }
 
-console.log(dispersion);
+console.log(sDeviation.join("  "));
+console.log(dispersion.join("  "));
+for(let i in deviation){
+    console.log(deviation[i].join(" "));
+    
+}
+let ie = "";
+for(let i in percentage){
+    ie += percentage[i][0] + " ";
+}
+console.log(ie);
+
+
+
+
